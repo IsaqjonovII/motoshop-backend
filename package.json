@@ -1,7 +1,7 @@
 {
   "name": "motoshop-server",
   "version": "1.0.0",
-  "main": "src/main.js",
+  "main": "main.js",
   "license": "MIT",
   "scripts": {
     "start": "node src/main.js",
