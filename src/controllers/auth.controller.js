@@ -5,9 +5,6 @@ async function createUser(req, reply) {
   try {
     const { name, phone, password } = req.body;
     const existingUser = await User.findOne({ phone });
-    console.log("Creating user" + req.body.phone);
-    console.log("Request Payload:", req.body);
-
     if (existingUser) {
       reply.status(401).send({ message: "Bu raqam allaqachon tizimda mavjud" });
     } else {
@@ -30,10 +27,12 @@ async function loginUser(req, reply) {
 
     if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
       reply.status(404).send({
-        message: "Bu telefon raqam/parol bilan foydalanuvchi topilmadi",
+        message: "Bu telefon raqam yoki parol bilan foydalanuvchi topilmadi",
       });
     }
-    reply.send({ message: "Tizimga kirildi", user });
+    const userWithoutPassword = { ...user.toObject() };
+    delete userWithoutPassword.password;
+    reply.send({ message: "Tizimga kirildi", user: userWithoutPassword });
   } catch (error) {
     reply.send({ message: "Serverda xatolik", error });
   }
