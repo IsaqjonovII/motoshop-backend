@@ -1,11 +1,10 @@
-const authController = require("../controllers/auth.controller");
 const {
   createUser,
   loginUser,
   getUserById,
   updateUser,
   getAllUsers,
-} = authController;
+} = require("../controllers/auth.controller");
 
 async function routes(fastify, options) {
   fastify.post("/", createUser);
