@@ -1,29 +1,24 @@
 const Ad = require("../models/ad.model");
-const { handleServerError } = require("../utils");
+const { handleServerError, uploadToCloudinary } = require("../utils");
 
 async function uploadAd(req, reply) {
   try {
-    const {
-      name,
-      description,
-      price,
-      location,
-      category,
-      images,
-      owner,
-    } = req.body;
+    const { name, description, price, location, category, owner } = req.body;
     const imageUrls = await Promise.all(
       req.raw.files.images.map(async (image) => {
-        // Assuming `uploadToCloudinary` is a function handling Cloudinary upload
         const imageUrl = await uploadToCloudinary(image.tempFilePath);
         return imageUrl;
       })
     );
 
     const newAd = new Ad({
-      title: req.body.title,
-      description: req.body.description,
-      imageUrls: imageUrls,
+      name,
+      description,
+      price,
+      location,
+      category,
+      images: imageUrls,
+      owner,
     });
 
     const result = await newAd.save();
