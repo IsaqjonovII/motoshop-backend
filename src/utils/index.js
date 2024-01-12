@@ -9,7 +9,7 @@ const handleServerError = (reply, error) => {
 async function uploadToCloudinary(imagePath) {
   try {
     const result = await v2.uploader.upload(imagePath);
-    return result.secure_url;
+    return result.url;
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
     throw error;

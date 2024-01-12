@@ -1,8 +1,8 @@
 const fastify = require("fastify")({ logger: true });
 const mongoose = require("mongoose");
 const cors = require("@fastify/cors");
-require("dotenv").config();
 const { v2 } = require("cloudinary");
+require("dotenv").config();
 
 v2.config({
   cloud_name: "doswy0zdn",
@@ -14,7 +14,9 @@ v2.config({
 const authRoutes = require("./routes/auth.routes");
 const adRoutes = require("./routes/ad.routes");
 fastify.get("/", (req, reply) => {
-  reply.send("This is the api of motoshop.uz  Welcome!!!");
+  reply.send(
+    "This is the api of motoshop.uz. You better to go somewhere nice!!!"
+  );
 });
 
 //! Connecting to database
