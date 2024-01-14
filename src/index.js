@@ -5,9 +5,9 @@ const { v2 } = require("cloudinary");
 require("dotenv").config();
 
 v2.config({
-  cloud_name: "doswy0zdn",
-  api_key: "677983342875987",
-  api_secret: "V-bvbb1NP77rP5gVg0-ypbAfSF0",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 //! Importing routes

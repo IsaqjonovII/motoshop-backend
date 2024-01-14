@@ -3,10 +3,19 @@ const { handleServerError, uploadToCloudinary } = require("../utils");
 
 async function uploadAd(req, reply) {
   try {
-    const { name, description, price, location, category, owner } = req.body;
+    const {
+      name,
+      description,
+      price,
+      location,
+      category,
+      owner,
+      images,
+    } = req.body;
+
     const imageUrls = await Promise.all(
-      req.raw.files.images.map(async (image) => {
-        const imageUrl = await uploadToCloudinary(image.tempFilePath);
+      images.map(async (image) => {
+        const imageUrl = await uploadToCloudinary(image);
         return imageUrl;
       })
     );
@@ -54,6 +63,17 @@ async function getAdById(req, reply) {
     handleServerError(reply, error);
   }
 }
+
+async function getAdsByUserId(req, reply) {
+  try {
+    const userId = req.params.id;
+    const userAds = await Ad.find({ owner: userId });
+    console.log(userAds);
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+
 async function getAllAds(req, reply) {
   try {
     const ads = await Ad.find().populate(
@@ -66,4 +86,4 @@ async function getAllAds(req, reply) {
   }
 }
 
-module.exports = { uploadAd, deleteAd, getAdById, getAllAds };
+module.exports = { uploadAd, deleteAd, getAdById, getAllAds, getAdsByUserId };
