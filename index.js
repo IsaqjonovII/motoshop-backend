@@ -11,8 +11,8 @@ v2.config({
 });
 
 //! Importing routes
-const authRoutes = require("./routes/auth.routes");
-const adRoutes = require("./routes/ad.routes");
+const authRoutes = require("./src/routes/auth.routes");
+const adRoutes = require("./src/routes/ad.routes");
 fastify.get("/", (req, reply) => {
   reply.send(
     "This is the api of motoshop.uz. You better to go somewhere nice!!!"
