@@ -29,7 +29,10 @@ const AdSchema = new Schema({
     ref: "User",
     required: true,
   },
+  engine: String,
+  mileage: String,
+  manufacturedAt: Date || String,
+  socialLinks: Array,
 });
-
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;
