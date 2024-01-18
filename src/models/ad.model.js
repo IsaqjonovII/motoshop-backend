@@ -29,7 +29,7 @@ const AdSchema = new Schema({
     ref: "User",
     required: true,
   },
-  engine: String,
+  engineSize: String,
   mileage: String,
   manufacturedAt: Date || String,
   socialLinks: Array,
