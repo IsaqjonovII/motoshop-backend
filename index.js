@@ -29,12 +29,15 @@ mongoose
 fastify.register(cors);
 fastify.register(authRoutes, { prefix: "/api/v0/auth" });
 fastify.register(adRoutes, { prefix: "/api/v0/ad" });
-(async () => {
+(() => {
   try {
-    await fastify.listen(process.env.PORT || 8000);
-    fastify.log.info(
-      "Server is running on port " + fastify.server.address().port
-    );
+    fastify.listen({ port: process.env.PORT || 8000 }, function (err, address) {
+      if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+      }
+      fastify.log.info(`Server is now listening on ${address}`);
+    });
   } catch (error) {
     fastify.log.error(error);
   }
