@@ -32,7 +32,7 @@ const AdSchema = new Schema({
   engineSize: String,
   mileage: String,
   manufacturedAt: Date || String,
-  contactLink: Array,
+  contactLinks: Array,
 });
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;
