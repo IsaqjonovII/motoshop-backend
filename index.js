@@ -31,7 +31,7 @@ fastify.register(authRoutes, { prefix: "/api/v0/auth" });
 fastify.register(adRoutes, { prefix: "/api/v0/ad" });
 (async () => {
   try {
-    await fastify.listen(5000);
+    await fastify.listen(process.env.PORT || 8000);
     fastify.log.info(
       "Server is running on port " + fastify.server.address().port
     );
