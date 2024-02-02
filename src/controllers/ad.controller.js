@@ -86,4 +86,20 @@ async function getAllAds(req, reply) {
   }
 }
 
-module.exports = { uploadAd, deleteAd, getAdById, getAllAds, getAdsByUserId };
+async function getRandomAds(req, reply) {
+  try {
+    const randomAds = await Ad.find().sort({ date: -1 });
+    return reply.send(randomAds.slice(1, 16));
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+
+module.exports = {
+  uploadAd,
+  deleteAd,
+  getAdById,
+  getAllAds,
+  getAdsByUserId,
+  getRandomAds,
+};
