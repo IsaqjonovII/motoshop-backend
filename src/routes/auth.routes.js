@@ -4,6 +4,8 @@ const {
   getUserById,
   updateUser,
   getAllUsers,
+  verifyUser,
+  deleteUser,
 } = require("../controllers/auth.controller");
 
 async function routes(fastify, options) {
@@ -12,7 +14,7 @@ async function routes(fastify, options) {
   fastify.get("/:id", getUserById);
   fastify.put("/:id", updateUser);
   fastify.get("/", getAllUsers);
-
-  // fastify.delete("/:id", deleteUser);
+  fastify.post("/verify/:id", verifyUser);
+  fastify.delete("/:id", deleteUser);
 }
 module.exports = routes;

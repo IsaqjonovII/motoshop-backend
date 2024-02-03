@@ -61,6 +61,7 @@ const userSchema = new mongoose.Schema({
     maxLength: 1024,
     required: true,
   },
+  isVerified: Boolean,
 });
 
 const User = mongoose.model("User", userSchema);

@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
+const { Vonage } = require("@vonage/server-sdk");
 const User = require("../models/auth.model");
+const { handleServerError } = require("../utils");
 
 async function createUser(req, reply) {
   try {
@@ -63,10 +65,63 @@ async function getAllUsers(req, reply) {
     reply.status(500).send(error);
   }
 }
+async function verifyUser(req, reply) {
+  const vonage = new Vonage({
+    apiKey: "cc5ed230",
+    apiSecret: "5LAcWx6PsDexPjK4",
+  });
+  try {
+    const CODE = req.body;
+    const { phone } = await User.findById(req.params.id);
+    let request_id;
+    await vonage.verify.start(
+      {
+        number: phone,
+        brand: "Motoshop",
+      },
+      (err, res) => {
+        if (err) {
+          console.log(err);
+          return reply
+            .status(500)
+            .send({ message: "Xatolik yuz berdi. Qaytadan urinib ko'ring" });
+        }
+        request_id = res.request_id;
+        console.log(request_id);
+      }
+    );
+
+    await vonage.verify
+      .check(request_id, CODE)
+      .then((resp) => console.log(resp))
+      .catch((err) => console.error(err));
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+async function deleteUser(req, reply) {
+  try {
+    const userId = req.params.id;
+    if (!userId) {
+      reply.status(404).send({ message: "Bunday foydalanuvchi topilmadi" });
+    }
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return reply
+        .status(404)
+        .send({ message: "Bunday foydalanuvchi topilmadi" });
+    }
+    reply.send({ message: "Hisob o'chirildi" });
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
 module.exports = {
   createUser,
   loginUser,
   getUserById,
   updateUser,
   getAllUsers,
+  verifyUser,
+  deleteUser,
 };
