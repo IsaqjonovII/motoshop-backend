@@ -31,8 +31,12 @@ const AdSchema = new Schema({
   },
   engineSize: String,
   mileage: String,
-  manufacturedAt: Date || String,
+  manufacturedAt: Schema.Types.Mixed,
   contactLinks: Array,
+  postedAt: {
+    type: Date,
+    default: Date.now, 
+  },
 });
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;

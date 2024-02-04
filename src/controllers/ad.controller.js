@@ -1,7 +1,7 @@
 const Ad = require("../models/ad.model");
 const { handleServerError, uploadToCloudinary } = require("../utils");
 
-async function uploadAd(req, reply) {
+async function createAd(req, reply) {
   try {
     const {
       name,
@@ -78,7 +78,7 @@ async function getAllAds(req, reply) {
   try {
     const ads = await Ad.find().populate(
       "owner",
-      "name phone location profilePicture"
+      "name phone location"
     );
     return reply.send(ads);
   } catch (error) {
@@ -96,7 +96,7 @@ async function getRandomAds(req, reply) {
 }
 
 module.exports = {
-  uploadAd,
+  createAd,
   deleteAd,
   getAdById,
   getAllAds,
