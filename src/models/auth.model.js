@@ -12,19 +12,19 @@ const userSchema = new Schema({
   },
   postedAds: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Ad",
     },
   ],
   viewedAds: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Ad",
     },
   ],
   likedAds: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Ad",
     },
   ],
@@ -34,19 +34,19 @@ const userSchema = new Schema({
   savedSearches: [String],
   chatHistory: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Chat",
     },
   ],
   feedback: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Feedback",
     },
   ],
   favoriteSellers: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
