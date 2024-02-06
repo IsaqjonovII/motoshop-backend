@@ -84,7 +84,7 @@ async function getAllAds(req, reply) {
 
 async function getAdsByCategory(req, reply) {
   try {
-    const selectedCategory = req.body;
+    const selectedCategory = req.params.category;
     const ads = await Ad.find();
     const filteredAds = ads.filter(
       ({ category }) => category === selectedCategory

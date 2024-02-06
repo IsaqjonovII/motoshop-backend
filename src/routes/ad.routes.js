@@ -13,6 +13,6 @@ async function routes(fastify, options) {
   fastify.get("/:id", getAdById);
   fastify.delete("/:id", deleteAd);
   fastify.get("/ads-by-userId/:id", getAdsByUserId);
-  fastify.get("/ads-by-category", getAdsByCategory);
+  fastify.get("/ads-by-category/:category", getAdsByCategory);
 }
 module.exports = routes;
