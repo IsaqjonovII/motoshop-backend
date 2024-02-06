@@ -37,7 +37,6 @@ async function createAd(req, reply) {
     handleServerError(reply, error);
   }
 }
-
 async function deleteAd(req, reply) {
   try {
     const deletedAd = await Ad.findByIdAndDelete(req.params.id);
@@ -76,20 +75,21 @@ async function getAdsByUserId(req, reply) {
 
 async function getAllAds(req, reply) {
   try {
-    const ads = await Ad.find().populate(
-      "owner",
-      "name phone location"
-    );
+    const ads = await Ad.find().populate("owner", "name phone location");
     return reply.send(ads);
   } catch (error) {
     handleServerError(reply, error);
   }
 }
 
-async function getRandomAds(req, reply) {
+async function getAdsByCategory(req, reply) {
   try {
-    const randomAds = await Ad.find().sort({ date: -1 });
-    return reply.send(randomAds.slice(1, 16));
+    const selectedCategory = req.body;
+    const ads = await Ad.find();
+    const filteredAds = ads.filter(
+      ({ category }) => category === selectedCategory
+    );
+    return reply.send(filteredAds.slice(0, 16));
   } catch (error) {
     handleServerError(reply, error);
   }
@@ -101,5 +101,5 @@ module.exports = {
   getAdById,
   getAllAds,
   getAdsByUserId,
-  getRandomAds,
+  getAdsByCategory,
 };
