@@ -5,6 +5,7 @@ const {
   getAllAds,
   getAdsByUserId,
   getAdsByCategory,
+  getRandomsAds,
 } = require("../controllers/ad.controller");
 
 async function routes(fastify, options) {
@@ -14,5 +15,6 @@ async function routes(fastify, options) {
   fastify.delete("/:id", deleteAd);
   fastify.get("/ads-by-userId/:id", getAdsByUserId);
   fastify.get("/ads-by-category/:category", getAdsByCategory);
+  fastify.get("/random-ads", getRandomsAds);
 }
 module.exports = routes;

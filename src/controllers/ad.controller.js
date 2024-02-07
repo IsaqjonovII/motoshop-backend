@@ -94,6 +94,14 @@ async function getAdsByCategory(req, reply) {
     handleServerError(reply, error);
   }
 }
+async function getRandomsAds(req, reply) {
+  try {
+    const ads = await Ad.find({ date: -1 });
+    return reply.send(ads);
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
 
 module.exports = {
   createAd,
@@ -102,4 +110,5 @@ module.exports = {
   getAllAds,
   getAdsByUserId,
   getAdsByCategory,
+  getRandomsAds,
 };
