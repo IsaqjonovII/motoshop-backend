@@ -96,8 +96,11 @@ async function getAdsByCategory(req, reply) {
 }
 async function getRandomsAds(req, reply) {
   try {
-    const ads = await Ad.find({ date: -1 });
-    return reply.send(ads);
+    const { limit } = req.query;
+    const randomAds = await Ad.aggregate([
+      { $sample: { size: parseInt(limit) } },
+    ]);
+    return reply.send(randomAds);
   } catch (error) {
     handleServerError(reply, error);
   }
