@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const AdSchema = new Schema({
-  name: {
+  title: {
     type: String,
     required: true,
   },
@@ -32,10 +32,18 @@ const AdSchema = new Schema({
   engineSize: String,
   mileage: String,
   manufacturedAt: Schema.Types.Mixed,
-  contactLinks: Array,
   postedAt: {
     type: Date,
-    default: Date.now, 
+    default: Date.now,
+  },
+  views: {
+    type: Number,
+    default: 0,
+  },
+  color: String,
+  likes: {
+    type: String,
+    default: 0,
   },
 });
 const Ad = model("Ad", AdSchema);
