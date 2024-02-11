@@ -45,6 +45,9 @@ const AdSchema = new Schema({
     type: String,
     default: 0,
   },
+  condition: String,
+  brand: String,
+  size: String,
 });
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;

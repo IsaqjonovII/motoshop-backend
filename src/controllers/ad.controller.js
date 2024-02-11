@@ -3,15 +3,7 @@ const { handleServerError, uploadToCloudinary } = require("../utils");
 
 async function createAd(req, reply) {
   try {
-    const {
-      name,
-      description,
-      price,
-      location,
-      category,
-      owner,
-      images,
-    } = req.body;
+    const { images } = req.body;
 
     const imageUrls = await Promise.all(
       images.map(async (image) => {
@@ -21,13 +13,8 @@ async function createAd(req, reply) {
     );
 
     const newAd = new Ad({
-      name,
-      description,
-      price,
-      location,
-      category,
+      ...req.body,
       images: imageUrls,
-      owner,
     });
 
     const result = await newAd.save();
