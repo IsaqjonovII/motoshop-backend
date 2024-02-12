@@ -42,7 +42,7 @@ const AdSchema = new Schema({
   },
   color: String,
   likes: {
-    type: String,
+    type: Number,
     default: 0,
   },
   condition: String,

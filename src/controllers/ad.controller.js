@@ -39,7 +39,7 @@ async function getAdById(req, reply) {
   try {
     const ad = await Ad.findById(req.params.id).populate(
       "owner",
-      "name phone location profilePicture"
+      "name phone location"
     );
     if (!ad) {
       reply.status(404).send({ message: "Bunday e'lon topilmadi" });
@@ -54,13 +54,13 @@ async function getAdsByUserId(req, reply) {
   try {
     const userId = req.params.id;
     const userAds = await Ad.find({ owner: userId });
-    console.log(userAds);
+    return reply.send(userAds);
   } catch (error) {
     handleServerError(reply, error);
   }
 }
 
-async function getAllAds(req, reply) {
+async function getAllAds(_, reply) {
   try {
     const ads = await Ad.find().populate("owner", "name phone location");
     return reply.send(ads);
@@ -69,14 +69,13 @@ async function getAllAds(req, reply) {
   }
 }
 
-async function getAdsByCategory(req, reply) {
+async function getAdsByType(req, reply) {
   try {
-    const selectedCategory = req.params.category;
     const ads = await Ad.find();
-    const filteredAds = ads.filter(
-      ({ category }) => category === selectedCategory
-    );
-    return reply.send(filteredAds.slice(0, 16));
+    const filteredAds = ads
+      .filter(({ adType }) => adType === req.query.type)
+      .slice(0, 20);
+    return reply.send(filteredAds);
   } catch (error) {
     handleServerError(reply, error);
   }
@@ -99,6 +98,6 @@ module.exports = {
   getAdById,
   getAllAds,
   getAdsByUserId,
-  getAdsByCategory,
+  getAdsByType,
   getRandomsAds,
 };
