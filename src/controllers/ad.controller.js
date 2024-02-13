@@ -71,11 +71,8 @@ async function getAllAds(_, reply) {
 
 async function getAdsByType(req, reply) {
   try {
-    const ads = await Ad.find();
-    const filteredAds = ads
-      .filter(({ adType }) => adType === req.query.type)
-      .slice(0, 20);
-    return reply.send(filteredAds);
+    const ads = await Ad.find({ adType: req.query.type }).limit(20);
+    return reply.send(ads);
   } catch (error) {
     handleServerError(reply, error);
   }
