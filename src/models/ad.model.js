@@ -10,8 +10,9 @@ const AdSchema = new Schema({
     required: true,
   },
   price: {
-    type: String,
-    required: true,
+    amount: Number,
+    currency: String,
+    canBargain: Boolean,
   },
   location: {
     type: String,
@@ -48,7 +49,7 @@ const AdSchema = new Schema({
   condition: String,
   brand: String,
   size: String,
-  adType: String
+  adType: String,
 });
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;
