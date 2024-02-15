@@ -32,7 +32,7 @@ fastify.register(adRoutes, { prefix: "/api/v0/ad" });
 (() => {
   try {
     fastify.listen(
-      { port: process.env.PORT || 8000 },
+      { port: process.env.PORT || 8000, host: "0.0.0.0" },
       function (err, address) {
         if (err) {
           fastify.log.error(err);
