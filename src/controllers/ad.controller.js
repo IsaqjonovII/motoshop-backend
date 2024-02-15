@@ -109,6 +109,26 @@ async function updateAdView(req, reply) {
     handleServerError(reply, error);
   }
 }
+async function updateAdLike(req, reply) {
+  try {
+    const { userId, adId } = req.query;
+    const hasLiked = await User.findOne({
+      _id: userId,
+      likedAds: adId,
+    }).exec();
+
+    if (!hasLiked) {
+      await Ad.findByIdAndUpdate(adId, { $inc: { likes: 1 } }, { new: true });
+      await User.findByIdAndUpdate(
+        userId,
+        { $push: { likedAds: adId } },
+        { new: true }
+      );
+    }
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
 
 module.exports = {
   createAd,
@@ -119,4 +139,5 @@ module.exports = {
   getAdsByType,
   getRandomsAds,
   updateAdView,
+  updateAdLike
 };
