@@ -1,4 +1,4 @@
-const fastify = require("fastify")({ logger: true });
+const fastify = require("fastify")({ logger: true, bodyLimit: 100 * 1024 * 1024 });
 const mongoose = require("mongoose");
 const cors = require("@fastify/cors");
 const { v2 } = require("cloudinary");
@@ -32,7 +32,7 @@ fastify.register(adRoutes, { prefix: "/api/v0/ad" });
 (() => {
   try {
     fastify.listen(
-      { port: process.env.PORT || 8000, host: "0.0.0.0" },
+      { port: process.env.PORT || 8000 },
       function (err, address) {
         if (err) {
           fastify.log.error(err);

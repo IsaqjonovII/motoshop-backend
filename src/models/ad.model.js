@@ -32,7 +32,7 @@ const AdSchema = new Schema({
   },
   engineSize: String,
   mileage: String,
-  manufacturedAt: Schema.Types.Mixed,
+  manufacturedAt: String,
   postedAt: {
     type: Date,
     default: Date.now,

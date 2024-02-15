@@ -1,4 +1,5 @@
 const Ad = require("../models/ad.model");
+const User = require("../models/auth.model");
 const { handleServerError, uploadToCloudinary } = require("../utils");
 
 async function createAd(req, reply) {
@@ -88,6 +89,26 @@ async function getRandomsAds(req, reply) {
     handleServerError(reply, error);
   }
 }
+async function updateAdView(req, reply) {
+  try {
+    const { userId, adId } = req.query;
+    const hasViewed = await User.findOne({
+      _id: userId,
+      viewedAds: adId,
+    }).exec();
+
+    if (!hasViewed) {
+      await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
+      await User.findByIdAndUpdate(
+        userId,
+        { $push: { viewedAds: adId } },
+        { new: true }
+      );
+    }
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
 
 module.exports = {
   createAd,
@@ -97,4 +118,5 @@ module.exports = {
   getAdsByUserId,
   getAdsByType,
   getRandomsAds,
+  updateAdView,
 };
