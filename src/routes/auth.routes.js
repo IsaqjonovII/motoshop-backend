@@ -11,7 +11,7 @@ const {
 async function routes(fastify, options) {
   fastify.post("/", createUser);
   fastify.post("/login", loginUser);
-  fastify.get("/:id", getUserById);
+  fastify.get("/info", getUserById);
   fastify.put("/:id", updateUser);
   fastify.get("/", getAllUsers);
   fastify.post("/verify/:id", verifyUser);

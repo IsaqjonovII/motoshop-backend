@@ -41,8 +41,9 @@ async function loginUser(req, reply) {
 }
 async function getUserById(req, reply) {
   try {
-    const user = await User.findById(req.params.id);
-    reply.send(user);
+    const { userId } = req.query;
+    const user = await User.findById(userId);
+    return reply.send(user);
   } catch (error) {
     reply.status(500).send(error);
   }

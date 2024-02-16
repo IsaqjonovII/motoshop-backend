@@ -53,8 +53,8 @@ async function getAdById(req, reply) {
 
 async function getAdsByUserId(req, reply) {
   try {
-    const userId = req.params.id;
-    const userAds = await Ad.find({ owner: userId });
+    const { id, adId } = req.query;
+    const userAds = await Ad.find({ owner: id, _id: { $ne: adId } });
     return reply.send(userAds);
   } catch (error) {
     handleServerError(reply, error);
@@ -101,7 +101,7 @@ async function updateAdView(req, reply) {
       await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
       await User.findByIdAndUpdate(
         userId,
-        { $push: { viewedAds: adId } },
+        { $addToSet: { viewedAds: adId } },
         { new: true }
       );
     }
@@ -124,10 +124,40 @@ async function updateAdLike(req, reply) {
         { $push: { likedAds: adId } },
         { new: true }
       );
+      return reply.send({ message: "Yoqtirilgan e'lonlarga qo'shildi" });
     }
+    return reply.send({
+      message: "Bu e'lon allaqachon yoqitirlganlar ro'yhatida",
+    });
   } catch (error) {
     handleServerError(reply, error);
   }
+}
+async function removeAdLike(req, reply) {
+  try {
+    const { userId, adId } = req.query;
+    const isExits = await User.findOne({
+      _id: userId,
+      likedAds: adId,
+    }).exec();
+    if (isExits) {
+      await Ad.findByIdAndUpdate(adId, { $inc: { likes: -1 } });
+      await User.findByIdAndUpdate(userId, { $pull: { likedAds: adId } });
+      return reply.send({ message: "Yoqtirilgan e'lonlardan olib tashlandi!" });
+    }
+    return reply.send({
+      message: "Xatolik yuz berdi! Iltimos birozdan so'ng urinib ko'ring",
+    });
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+async function getSimilarAdsByType(req, reply) {
+  try {
+    const { type, id } = req.query;
+    const ads = await Ad.find({ adType: type, _id: { $ne: id } });
+    return reply.send(ads);
+  } catch (error) {}
 }
 
 module.exports = {
@@ -139,5 +169,7 @@ module.exports = {
   getAdsByType,
   getRandomsAds,
   updateAdView,
-  updateAdLike
+  updateAdLike,
+  removeAdLike,
+  getSimilarAdsByType,
 };
