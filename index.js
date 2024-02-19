@@ -1,4 +1,7 @@
-const fastify = require("fastify")({ logger: true, bodyLimit: 100 * 1024 * 1024 });
+const fastify = require("fastify")({
+  logger: true,
+  bodyLimit: 100 * 1024 * 1024,
+});
 const mongoose = require("mongoose");
 const cors = require("@fastify/cors");
 const { v2 } = require("cloudinary");
