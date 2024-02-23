@@ -58,8 +58,13 @@ async function getAdById(req, reply) {
 async function getAdsByUserId(req, reply) {
   try {
     const { id, adId } = req.query;
-    const userAds = await Ad.find({ owner: id, _id: { $ne: adId } });
-    return reply.send(userAds);
+    if (!adId || adId == undefined) {
+      const userAds = await Ad.find({ owner: id });
+      return reply.send(userAds);
+    } else {
+      const userAds = await Ad.find({ owner: id, _id: { $ne: adId } });
+      return reply.send(userAds);
+    }
   } catch (error) {
     handleServerError(reply, error);
   }

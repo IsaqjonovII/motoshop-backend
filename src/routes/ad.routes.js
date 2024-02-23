@@ -11,7 +11,6 @@ const {
   removeAdLike,
   getSimilarAdsByType,
 } = require("../controllers/ad.controller");
-const { getUserAds } = require("../controllers/userAd.controller");
 
 async function routes(fastify, options) {
   fastify.post("/", createAd);
@@ -25,6 +24,5 @@ async function routes(fastify, options) {
   fastify.post("/add-like", updateAdLike);
   fastify.post("/remove-like", removeAdLike);
   fastify.get("/similar-ads", getSimilarAdsByType);
-  fastify.get("/user-ads", getUserAds);
 }
 module.exports = routes;
