@@ -1,6 +1,7 @@
 const { v2 } = require("cloudinary");
 
 const handleServerError = (reply, error) => {
+  console.log(error);
   reply.status(500).send({
     message: "Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring",
     error,

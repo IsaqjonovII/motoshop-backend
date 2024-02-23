@@ -17,9 +17,13 @@ async function createAd(req, reply) {
       ...req.body,
       images: imageUrls,
     });
-
     const result = await newAd.save();
 
+    await User.findByIdAndUpdate(
+      req.body.owner,
+      { $push: { postedAds: result._id } },
+      { new: true }
+    );
     return reply.send({ message: "E'lon joylandi.", ad: result });
   } catch (error) {
     handleServerError(reply, error);
