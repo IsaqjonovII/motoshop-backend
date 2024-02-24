@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Ad = require("../models/ad.model");
 const User = require("../models/auth.model");
 const { handleServerError, uploadToCloudinary } = require("../utils");
@@ -168,6 +169,25 @@ async function getSimilarAdsByType(req, reply) {
     return reply.send(ads);
   } catch (error) {}
 }
+async function getLikedAdsByUser(req, reply) {
+  try {
+    const { userId } = req.query;
+    const user = await User.findOne({ _id: userId });
+    const adIds = user.likedAds;
+    console.log(adIds)
+    const likedAds = await Ad.find({
+      _id: { $in: adIds },
+    });
+
+    if (likedAds.length > 0) {
+      return reply.send(likedAds);
+    } else {
+      return reply.send({ message: "Hech qanday ma'lumot topilmadi." });
+    }
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
 
 module.exports = {
   createAd,
@@ -181,4 +201,5 @@ module.exports = {
   updateAdLike,
   removeAdLike,
   getSimilarAdsByType,
+  getLikedAdsByUser,
 };
