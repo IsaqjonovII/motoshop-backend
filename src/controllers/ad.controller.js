@@ -174,13 +174,32 @@ async function getLikedAdsByUser(req, reply) {
     const { userId } = req.query;
     const user = await User.findOne({ _id: userId });
     const adIds = user.likedAds;
-    console.log(adIds)
+    console.log(adIds);
     const likedAds = await Ad.find({
       _id: { $in: adIds },
     });
 
     if (likedAds.length > 0) {
       return reply.send(likedAds);
+    } else {
+      return reply.send({ message: "Hech qanday ma'lumot topilmadi." });
+    }
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+async function getLastViewedAds(req, reply) {
+  try {
+    const { id } = req.query;
+    const user = await User.findOne({ _id: id });
+    const adIds = user.viewedAds;
+    console.log(adIds);
+    const viewedAds = await Ad.find({
+      _id: { $in: adIds },
+    }).sort({ date: -1 });
+    
+    if (viewedAds.length > 0) {
+      return reply.send(viewedAds);
     } else {
       return reply.send({ message: "Hech qanday ma'lumot topilmadi." });
     }
@@ -202,4 +221,5 @@ module.exports = {
   removeAdLike,
   getSimilarAdsByType,
   getLikedAdsByUser,
+  getLastViewedAds,
 };
