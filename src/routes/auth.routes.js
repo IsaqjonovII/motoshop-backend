@@ -11,7 +11,7 @@ async function routes(fastify, options) {
   fastify.post("/", createUser);
   fastify.post("/login", loginUser);
   fastify.get("/info", getUserById);
-  fastify.put("/:id", updateUser);
+  fastify.put("/update", updateUser);
   fastify.get("/", getAllUsers);
   fastify.delete("/:id", deleteUser);
 }

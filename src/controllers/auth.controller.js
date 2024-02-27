@@ -49,9 +49,8 @@ async function getUserById(req, reply) {
 }
 async function updateUser(req, reply) {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const { id, name, phone } = req.body;
+    const user = await User.findByIdAndUpdate(id, { name, phone }, { new: true });
     reply.send(user);
   } catch (error) {
     reply.status(500).send(error);

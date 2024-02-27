@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Ad = require("../models/ad.model");
 const User = require("../models/auth.model");
 const { handleServerError, uploadToCloudinary } = require("../utils");
@@ -167,14 +166,15 @@ async function getSimilarAdsByType(req, reply) {
     const { type, id } = req.query;
     const ads = await Ad.find({ adType: type, _id: { $ne: id } });
     return reply.send(ads);
-  } catch (error) {}
+  } catch (error) {
+    handleServerError(reply, error)
+  }
 }
 async function getLikedAdsByUser(req, reply) {
   try {
     const { userId } = req.query;
     const user = await User.findOne({ _id: userId });
     const adIds = user.likedAds;
-    console.log(adIds);
     const likedAds = await Ad.find({
       _id: { $in: adIds },
     });
@@ -193,10 +193,9 @@ async function getLastViewedAds(req, reply) {
     const { id } = req.query;
     const user = await User.findOne({ _id: id });
     const adIds = user.viewedAds;
-    console.log(adIds);
     const viewedAds = await Ad.find({
       _id: { $in: adIds },
-    }).sort({ date: -1 });
+    });
     
     if (viewedAds.length > 0) {
       return reply.send(viewedAds);
