@@ -9,14 +9,16 @@ const handleServerError = (reply, error) => {
 };
 async function uploadToCloudinary(imagePath) {
   try {
-    const result = await v2.uploader.upload(imagePath);
+    const result = await v2.uploader.upload(imagePath, {
+      folder: "motoshop",
+    });
     return result.url;
   } catch (error) {
     console.error("Rasm yuklanishida xatolik bo'ldi:", error);
     throw error;
   }
 }
-async function deleteCloudinaryImages(imgs){
+async function deleteCloudinaryImages(imgs) {
   try {
     const res = await v2.api.delete_resources(imgs);
     return res;
@@ -25,4 +27,8 @@ async function deleteCloudinaryImages(imgs){
     throw error;
   }
 }
-module.exports = { handleServerError, uploadToCloudinary, deleteCloudinaryImages };
+module.exports = {
+  handleServerError,
+  uploadToCloudinary,
+  deleteCloudinaryImages,
+};

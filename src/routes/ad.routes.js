@@ -1,3 +1,4 @@
+const { v2 } = require("cloudinary");
 const {
   createAd,
   deleteAd,
@@ -13,6 +14,26 @@ const {
   getLikedAdsByUser,
   getLastViewedAds,
 } = require("../controllers/ad.controller");
+async function deleteAllImages(_, reply) {
+  try {
+    // const res = await v2.api.delete_resources_by_prefix("motocycles");
+    const publicIds = [];
+    const res = await v2.api.resources();
+    await res.resources.forEach((img) => {
+      publicIds.push(img.public_id);
+    });
+    const folders = await v2.api.resources({
+      type: "upload",
+    });
+    await folders.resources.forEach((img) => {
+      publicIds.push(img.public_id);
+    });
+    const deleted = await v2.api.delete_resources(publicIds);
+    return reply.send(deleted);
+  } catch (error) {
+    return reply.send(error);
+  }
+}
 
 async function routes(fastify, options) {
   fastify.post("/", createAd);
@@ -28,5 +49,6 @@ async function routes(fastify, options) {
   fastify.get("/similar-ads", getSimilarAdsByType);
   fastify.get("/liked-ads", getLikedAdsByUser);
   fastify.get("/viewed-ads", getLastViewedAds);
+  fastify.get("/delete-all", deleteAllImages);
 }
 module.exports = routes;

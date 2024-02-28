@@ -167,7 +167,7 @@ async function getSimilarAdsByType(req, reply) {
     const ads = await Ad.find({ adType: type, _id: { $ne: id } });
     return reply.send(ads);
   } catch (error) {
-    handleServerError(reply, error)
+    handleServerError(reply, error);
   }
 }
 async function getLikedAdsByUser(req, reply) {
@@ -196,7 +196,7 @@ async function getLastViewedAds(req, reply) {
     const viewedAds = await Ad.find({
       _id: { $in: adIds },
     });
-    
+
     if (viewedAds.length > 0) {
       return reply.send(viewedAds);
     } else {
