@@ -12,8 +12,17 @@ async function uploadToCloudinary(imagePath) {
     const result = await v2.uploader.upload(imagePath);
     return result.url;
   } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
+    console.error("Rasm yuklanishida xatolik bo'ldi:", error);
     throw error;
   }
 }
-module.exports = { handleServerError, uploadToCloudinary };
+async function deleteCloudinaryImages(imgs){
+  try {
+    const res = await v2.api.delete_resources(imgs);
+    return res;
+  } catch (error) {
+    console.log("Rasmlar o'chirilishida xatolik bo'ldi", error);
+    throw error;
+  }
+}
+module.exports = { handleServerError, uploadToCloudinary, deleteCloudinaryImages };

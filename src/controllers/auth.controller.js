@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/auth.model");
 const { handleServerError } = require("../utils");
+const Ad = require("../models/ad.model");
 
 async function createUser(req, reply) {
   try {
@@ -50,7 +51,11 @@ async function getUserById(req, reply) {
 async function updateUser(req, reply) {
   try {
     const { id, name, phone } = req.body;
-    const user = await User.findByIdAndUpdate(id, { name, phone }, { new: true });
+    const user = await User.findByIdAndUpdate(
+      id,
+      { name, phone },
+      { new: true }
+    );
     reply.send(user);
   } catch (error) {
     reply.status(500).send(error);
@@ -71,6 +76,7 @@ async function deleteUser(req, reply) {
     if (!userId) {
       reply.status(404).send({ message: "Bunday foydalanuvchi topilmadi" });
     }
+    await Ad.deleteMany({ owner: userId });
     const deletedUser = await User.findByIdAndDelete(userId);
     if (!deletedUser) {
       return reply
