@@ -1,3 +1,4 @@
+const { v2 } = require("cloudinary");
 const Ad = require("../models/ad.model");
 const User = require("../models/auth.model");
 const { handleServerError, uploadToCloudinary } = require("../utils");
@@ -31,6 +32,15 @@ async function createAd(req, reply) {
 }
 async function deleteAd(req, reply) {
   try {
+    const imgIds = [];
+    const ad = await Ad.findById({ _id: req.params.id });
+    if (ad) {
+      await ad.images.forEach((img) => {
+        let imgId = img.split("/").pop().split(".").shift();
+        imgIds.push("motoshop/" + imgId);
+      });
+    }
+    await v2.api.delete_resources(imgIds);
     const deletedAd = await Ad.findByIdAndDelete(req.params.id);
     if (!deletedAd) {
       reply.status(404).send({ message: "Bunday e'lon topilmadi" });
