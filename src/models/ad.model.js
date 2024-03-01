@@ -43,8 +43,14 @@ const AdSchema = new Schema({
   },
   color: String,
   likes: {
-    type: Number,
-    default: 0,
+    likedUsers: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+    count: {
+      type: Number,
+      default: 0,
+    }
   },
   condition: String,
   brand: String,

@@ -16,7 +16,9 @@ v2.config({
 //! Importing routes
 const authRoutes = require("./src/routes/auth.routes");
 const adRoutes = require("./src/routes/ad.routes");
-fastify.get("/", (req, reply) => {
+const userRoutes = require("./src/routes/user.routes");
+
+fastify.get("/", (_, reply) => {
   reply.send(
     "This is the api of motoshop.uz. You better to go somewhere nice!!!"
   );
@@ -32,11 +34,13 @@ mongoose
 fastify.register(cors);
 fastify.register(authRoutes, { prefix: "/api/v0/auth" });
 fastify.register(adRoutes, { prefix: "/api/v0/ad" });
+fastify.register(userRoutes, { prefix: "/api/v0/user" });
+
 (() => {
   try {
-    //  
+    //  , host: "0.0.0.0"
     fastify.listen(
-      { port: process.env.PORT || 8000, host: "0.0.0.0"},
+      { port: process.env.PORT || 8000},
       function (err, address) {
         if (err) {
           fastify.log.error(err);

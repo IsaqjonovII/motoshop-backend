@@ -64,22 +64,6 @@ async function getAdById(req, reply) {
     handleServerError(reply, error);
   }
 }
-
-async function getAdsByUserId(req, reply) {
-  try {
-    const { id, adId } = req.query;
-    if (!adId || adId == undefined) {
-      const userAds = await Ad.find({ owner: id });
-      return reply.send(userAds);
-    } else {
-      const userAds = await Ad.find({ owner: id, _id: { $ne: adId } });
-      return reply.send(userAds);
-    }
-  } catch (error) {
-    handleServerError(reply, error);
-  }
-}
-
 async function getAllAds(_, reply) {
   try {
     const ads = await Ad.find().populate("owner", "name phone location");
@@ -114,7 +98,7 @@ async function updateAdView(req, reply) {
     const hasViewed = await User.findOne({
       _id: userId,
       viewedAds: adId,
-    }).exec();
+    });
 
     if (!hasViewed) {
       await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
@@ -155,18 +139,17 @@ async function updateAdLike(req, reply) {
 async function removeAdLike(req, reply) {
   try {
     const { userId, adId } = req.query;
-    const isExits = await User.findOne({
-      _id: userId,
-      likedAds: adId,
-    }).exec();
-    if (isExits) {
+    const user = await User.findById(userId).exec();
+    console.log(user);
+    if (user?.likedAds.includes(adId)) {
       await Ad.findByIdAndUpdate(adId, { $inc: { likes: -1 } });
       await User.findByIdAndUpdate(userId, { $pull: { likedAds: adId } });
       return reply.send({ message: "Yoqtirilgan e'lonlardan olib tashlandi!" });
+    } else {
+      return reply.send({
+        message: "Xatolik yuz berdi! Iltimos birozdan so'ng urinib ko'ring",
+      });
     }
-    return reply.send({
-      message: "Xatolik yuz berdi! Iltimos birozdan so'ng urinib ko'ring",
-    });
   } catch (error) {
     handleServerError(reply, error);
   }
@@ -180,55 +163,16 @@ async function getSimilarAdsByType(req, reply) {
     handleServerError(reply, error);
   }
 }
-async function getLikedAdsByUser(req, reply) {
-  try {
-    const { userId } = req.query;
-    const user = await User.findOne({ _id: userId });
-    const adIds = user.likedAds;
-    const likedAds = await Ad.find({
-      _id: { $in: adIds },
-    });
-
-    if (likedAds.length > 0) {
-      return reply.send(likedAds);
-    } else {
-      return reply.send({ message: "Hech qanday ma'lumot topilmadi." });
-    }
-  } catch (error) {
-    handleServerError(reply, error);
-  }
-}
-async function getLastViewedAds(req, reply) {
-  try {
-    const { id } = req.query;
-    const user = await User.findOne({ _id: id });
-    const adIds = user.viewedAds;
-    const viewedAds = await Ad.find({
-      _id: { $in: adIds },
-    });
-
-    if (viewedAds.length > 0) {
-      return reply.send(viewedAds);
-    } else {
-      return reply.send({ message: "Hech qanday ma'lumot topilmadi." });
-    }
-  } catch (error) {
-    handleServerError(reply, error);
-  }
-}
 
 module.exports = {
   createAd,
   deleteAd,
   getAdById,
   getAllAds,
-  getAdsByUserId,
   getAdsByType,
   getRandomsAds,
   updateAdView,
   updateAdLike,
   removeAdLike,
   getSimilarAdsByType,
-  getLikedAdsByUser,
-  getLastViewedAds,
 };
