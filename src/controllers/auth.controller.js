@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/auth.model");
-const { handleServerError } = require("../utils");
+const { handleServerError, deleteCloudinaryImages } = require("../utils");
 const Ad = require("../models/ad.model");
 
 async function createUser(req, reply) {
@@ -74,8 +74,16 @@ async function deleteUser(req, reply) {
   try {
     const userId = req.params.id;
     if (!userId) {
-      reply.status(404).send({ message: "Bunday foydalanuvchi topilmadi" });
+      return reply
+        .status(404)
+        .send({ message: "Bunday foydalanuvchi topilmadi" });
     }
+    const images = [];
+    const ads = await Ad.find({ owner: userId }).exec();
+    ads.forEach((ad) => {
+      images.push(ad.images);
+    });
+    await deleteCloudinaryImages(images);
     await Ad.deleteMany({ owner: userId });
     const deletedUser = await User.findByIdAndDelete(userId);
     if (!deletedUser) {
@@ -83,7 +91,7 @@ async function deleteUser(req, reply) {
         .status(404)
         .send({ message: "Bunday foydalanuvchi topilmadi" });
     }
-    reply.send({ message: "Hisob o'chirildi" });
+    return reply.send({ message: "Hisob o'chirildi" });
   } catch (error) {
     handleServerError(reply, error);
   }

@@ -18,9 +18,14 @@ async function uploadToCloudinary(imagePath) {
     throw error;
   }
 }
-async function deleteCloudinaryImages(imgs) {
+async function deleteCloudinaryImages(images) {
   try {
-    const res = await v2.api.delete_resources(imgs);
+    const imgIds = [];
+    await images.forEach((img) => {
+      let imgId = img.split("/").pop().split(".").shift();
+      imgIds.push("motoshop/" + imgId);
+    });
+    const res = await v2.api.delete_resources(imgIds);
     return res;
   } catch (error) {
     console.log("Rasmlar o'chirilishida xatolik bo'ldi", error);

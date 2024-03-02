@@ -1,7 +1,11 @@
 const { v2 } = require("cloudinary");
 const Ad = require("../models/ad.model");
 const User = require("../models/auth.model");
-const { handleServerError, uploadToCloudinary } = require("../utils");
+const {
+  handleServerError,
+  uploadToCloudinary,
+  deleteCloudinaryImages,
+} = require("../utils");
 
 async function createAd(req, reply) {
   try {
@@ -32,15 +36,8 @@ async function createAd(req, reply) {
 }
 async function deleteAd(req, reply) {
   try {
-    const imgIds = [];
-    const ad = await Ad.findById({ _id: req.params.id });
-    if (ad) {
-      await ad.images.forEach((img) => {
-        let imgId = img.split("/").pop().split(".").shift();
-        imgIds.push("motoshop/" + imgId);
-      });
-    }
-    await v2.api.delete_resources(imgIds);
+    const { images } = await Ad.findById({ _id: req.params.id });
+    await deleteCloudinaryImages(images);
     const deletedAd = await Ad.findByIdAndDelete(req.params.id);
     if (!deletedAd) {
       reply.status(404).send({ message: "Bunday e'lon topilmadi" });
@@ -112,48 +109,38 @@ async function updateAdView(req, reply) {
     handleServerError(reply, error);
   }
 }
-async function updateAdLike(req, reply) {
+async function toggleLikeAd(req, reply) {
   try {
     const { userId, adId } = req.query;
-    const hasLiked = await User.findOne({
-      _id: userId,
-      likedAds: adId,
-    }).exec();
-
-    if (!hasLiked) {
-      await Ad.findByIdAndUpdate(adId, { $inc: { likes: 1 } }, { new: true });
+    const { likedAds } = await User.findById(userId).exec();
+    if (!likedAds.includes(adId)) {
+      await Ad.findByIdAndUpdate(
+        adId,
+        {
+          $inc: { "likes.count": 1 },
+          $addToSet: { "likes.likedUsers": userId },
+        },
+        { new: true }
+      );
       await User.findByIdAndUpdate(
         userId,
-        { $push: { likedAds: adId } },
+        { $addToSet: { likedAds: adId } },
         { new: true }
       );
       return reply.send({ message: "Yoqtirilgan e'lonlarga qo'shildi" });
-    }
-    return reply.send({
-      message: "Bu e'lon allaqachon yoqitirlganlar ro'yhatida",
-    });
-  } catch (error) {
-    handleServerError(reply, error);
-  }
-}
-async function removeAdLike(req, reply) {
-  try {
-    const { userId, adId } = req.query;
-    const user = await User.findById(userId).exec();
-    console.log(user);
-    if (user?.likedAds.includes(adId)) {
-      await Ad.findByIdAndUpdate(adId, { $inc: { likes: -1 } });
-      await User.findByIdAndUpdate(userId, { $pull: { likedAds: adId } });
-      return reply.send({ message: "Yoqtirilgan e'lonlardan olib tashlandi!" });
     } else {
-      return reply.send({
-        message: "Xatolik yuz berdi! Iltimos birozdan so'ng urinib ko'ring",
+      await Ad.findByIdAndUpdate(adId, {
+        $inc: { "likes.count": -1 },
+        $pull: { "likes.likedUsers": userId },
       });
+      await User.findByIdAndUpdate(userId, { $pull: { likedAds: adId } });
+      return reply.send({ message: "Yoqtirilgan e'lonlardan olib tashlandi" });
     }
   } catch (error) {
     handleServerError(reply, error);
   }
 }
+
 async function getSimilarAdsByType(req, reply) {
   try {
     const { type, id } = req.query;
@@ -172,7 +159,6 @@ module.exports = {
   getAdsByType,
   getRandomsAds,
   updateAdView,
-  updateAdLike,
-  removeAdLike,
   getSimilarAdsByType,
+  toggleLikeAd,
 };
