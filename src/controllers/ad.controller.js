@@ -1,4 +1,3 @@
-const { v2 } = require("cloudinary");
 const Ad = require("../models/ad.model");
 const User = require("../models/auth.model");
 const {
@@ -93,10 +92,12 @@ async function updateAdView(req, reply) {
   try {
     const { userId, adId } = req.query;
     const user = await User.findById(userId).exec();
-    console.log(userId);
-    console.log(user);
     await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
-    await User.findByIdAndUpdate(userId, { $addToSet: { viewedAds: adId } }, { new: true });
+    await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { viewedAds: adId } },
+      { new: true }
+    );
     return reply.send({
       message: "This ad is already in the list of viewed ads",
     });
@@ -139,8 +140,30 @@ async function toggleLikeAd(req, reply) {
 async function getSimilarAdsByType(req, reply) {
   try {
     const { type, id } = req.query;
-    const ads = await Ad.find({ adType: type, _id: { $ne: id } });
+    const ads = await Ad.find({ adType: type, _id: { $ne: id } }).lean();
     return reply.send(ads);
+  } catch (error) {
+    handleServerError(reply, error);
+  }
+}
+
+async function getSearchedAds(req, reply) {
+  try {
+    const { query } = req.query;
+    console.log('====================================');
+    console.log(query);
+    console.log('====================================');
+    const searchedAds = await Ad.find({
+      $or: [
+        { title: { $regex:  new RegExp(query, 'i'), $option: 'i' } },
+        { description: { $regex: new RegExp(query, 'i'), $option: 'i' } },
+      ],
+    }).lean();
+    if(searchedAds.length){
+      return reply.send(searchedAds);
+    } else {
+      return reply.send({ message: "Qidiruvingiz bo'yicha hech qanday ma'lumot topilmadi." })
+    }
   } catch (error) {
     handleServerError(reply, error);
   }
@@ -156,4 +179,5 @@ module.exports = {
   updateAdView,
   getSimilarAdsByType,
   toggleLikeAd,
+  getSearchedAds
 };

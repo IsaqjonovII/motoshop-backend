@@ -10,7 +10,11 @@ const AdSchema = new Schema({
     required: true,
   },
   price: {
-    amount: Number,
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
     currency: String,
     canBargain: Boolean,
   },
@@ -20,10 +24,12 @@ const AdSchema = new Schema({
   },
   category: String,
   images: {
-    type: Array,
+    type: [String],
     required: true,
-    minLength: 1,
-    maxLength: 10,
+    validate: {
+      validator: (array) => array.length >= 1 && array.length <= 10,
+      message: "1 tadan 10taga rasm qo'yishingiz mumkin."
+    }
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -31,7 +37,9 @@ const AdSchema = new Schema({
     required: true,
   },
   engineSize: String,
-  mileage: String,
+  mileage: {
+    type: Number,
+  },
   manufacturedAt: String,
   postedAt: {
     type: Date,
@@ -43,19 +51,40 @@ const AdSchema = new Schema({
   },
   color: String,
   likes: {
-    likedUsers: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    }],
+    likedUsers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     count: {
       type: Number,
       default: 0,
-    }
+    },
   },
   condition: String,
   brand: String,
   size: String,
   adType: String,
+  status: {
+    type: String,
+    enum: ["active", "sold", "pending"],
+    default: "active",
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
+AdSchema.index({
+  title: "text",
+  description: "text",
+  mileage: "text",
+  category: "text",
+  color: "text",
+  engineSize: 'text',
+  location: 'text'
+});
+
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;
