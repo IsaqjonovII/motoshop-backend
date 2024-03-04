@@ -80,10 +80,12 @@ async function deleteUser(req, reply) {
     }
     const images = [];
     const ads = await Ad.find({ owner: userId }).exec();
-    ads.forEach((ad) => {
-      images.push(ad.images);
-    });
-    await deleteCloudinaryImages(images);
+    if (ads.length) {
+      ads.forEach((ad) => {
+        images.push(ad.images);
+      });
+      await deleteCloudinaryImages(images);
+    }
     await Ad.deleteMany({ owner: userId });
     const deletedUser = await User.findByIdAndDelete(userId);
     if (!deletedUser) {

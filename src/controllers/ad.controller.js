@@ -92,19 +92,14 @@ async function getRandomsAds(req, reply) {
 async function updateAdView(req, reply) {
   try {
     const { userId, adId } = req.query;
-    const hasViewed = await User.findOne({
-      _id: userId,
-      viewedAds: adId,
+    const user = await User.findById(userId).exec();
+    console.log(userId);
+    console.log(user);
+    await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
+    await User.findByIdAndUpdate(userId, { $addToSet: { viewedAds: adId } }, { new: true });
+    return reply.send({
+      message: "This ad is already in the list of viewed ads",
     });
-
-    if (!hasViewed) {
-      await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
-      await User.findByIdAndUpdate(
-        userId,
-        { $addToSet: { viewedAds: adId } },
-        { new: true }
-      );
-    }
   } catch (error) {
     handleServerError(reply, error);
   }
