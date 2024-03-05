@@ -71,7 +71,7 @@ async function getAllAds(_, reply) {
 
 async function getAdsByType(req, reply) {
   try {
-    const ads = await Ad.find({ adType: req.query.type }).limit(20);
+    const ads = await Ad.find({ adType: req.query.type }, 'title images postedAt views location price likes').limit(20);
     return reply.send(ads);
   } catch (error) {
     handleServerError(reply, error);
@@ -82,6 +82,19 @@ async function getRandomsAds(req, reply) {
     const { limit } = req.query;
     const randomAds = await Ad.aggregate([
       { $sample: { size: parseInt(limit) } },
+      {
+        $project: {
+          title: 1,
+          description: 1,
+          title: 1,
+          images: 1,
+          postedAt: 1,
+          views: 1,
+          location: 1,
+          price: 1,
+          likes: 1,
+        }
+      }
     ]);
     return reply.send(randomAds);
   } catch (error) {
@@ -91,7 +104,6 @@ async function getRandomsAds(req, reply) {
 async function updateAdView(req, reply) {
   try {
     const { userId, adId } = req.query;
-    const user = await User.findById(userId).exec();
     await Ad.findByIdAndUpdate(adId, { $inc: { views: 1 } }, { new: true });
     await User.findByIdAndUpdate(
       userId,
@@ -150,15 +162,13 @@ async function getSimilarAdsByType(req, reply) {
 async function getSearchedAds(req, reply) {
   try {
     const { query } = req.query;
-    console.log('====================================');
-    console.log(query);
-    console.log('====================================');
     const searchedAds = await Ad.find({
       $or: [
-        { title: { $regex:  new RegExp(query, 'i'), $option: 'i' } },
-        { description: { $regex: new RegExp(query, 'i'), $option: 'i' } },
+        { title: { $regex:  new RegExp(query, 'i') } },
+        { description: { $regex: new RegExp(query, 'i')} },
       ],
-    }).lean();
+    }).lean().select('title images postedAt views location price likes');
+
     if(searchedAds.length){
       return reply.send(searchedAds);
     } else {

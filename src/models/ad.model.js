@@ -86,5 +86,6 @@ AdSchema.index({
   location: 'text'
 });
 
+AdSchema.index({ "$**": 'text' })
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;
