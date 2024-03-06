@@ -28,8 +28,8 @@ const AdSchema = new Schema({
     required: true,
     validate: {
       validator: (array) => array.length >= 1 && array.length <= 10,
-      message: "1 tadan 10taga rasm qo'yishingiz mumkin."
-    }
+      message: "1 tadan 10taga rasm qo'yishingiz mumkin.",
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -49,7 +49,7 @@ const AdSchema = new Schema({
     type: Number,
     default: 0,
   },
-  color: String,
+  color: [String],
   likes: {
     likedUsers: [
       {
@@ -82,10 +82,10 @@ AdSchema.index({
   mileage: "text",
   category: "text",
   color: "text",
-  engineSize: 'text',
-  location: 'text'
+  engineSize: "text",
+  location: "text",
 });
 
-AdSchema.index({ "$**": 'text' })
+AdSchema.index({ "$**": "text" });
 const Ad = model("Ad", AdSchema);
 module.exports = Ad;

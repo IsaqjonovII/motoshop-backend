@@ -25,7 +25,7 @@ async function deleteCloudinaryImages(images) {
       let imgId = img.split("/").pop().split(".").shift();
       imgIds.push("motoshop/" + imgId);
     });
-    const res = await v2.api.delete_resources(imgIds);
+    const res = await v2.api.delete_resources(imgIds).then(() => "deleted");
     return res;
   } catch (error) {
     console.log("Rasmlar o'chirilishida xatolik bo'ldi", error);

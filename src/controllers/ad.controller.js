@@ -36,12 +36,19 @@ async function createAd(req, reply) {
 async function deleteAd(req, reply) {
   try {
     const { images } = await Ad.findById({ _id: req.params.id });
-    await deleteCloudinaryImages(images);
-    const deletedAd = await Ad.findByIdAndDelete(req.params.id);
-    if (!deletedAd) {
-      reply.status(404).send({ message: "Bunday e'lon topilmadi" });
+    const deletedImagesRes = await deleteCloudinaryImages(images);
+    if (deletedImagesRes === "deleted") {
+      const deletedAd = await Ad.findByIdAndDelete(req.params.id);
+      if (!deletedAd) {
+        reply.status(404).send({ message: "Bunday e'lon topilmadi" });
+      }
+      reply.status(204).send({ message: "E'lon o'chirildi" });
+    } else {
+      return reply.send({
+        message:
+          "E'lon o'chirilishida xatolik bo'ldi. Birozdan so'ng qayta urinib ko'ring.",
+      });
     }
-    reply.status(204).send({ message: "E'lon o'chirildi" });
   } catch (error) {
     handleServerError(reply, error);
   }
@@ -71,7 +78,10 @@ async function getAllAds(_, reply) {
 
 async function getAdsByType(req, reply) {
   try {
-    const ads = await Ad.find({ adType: req.query.type }, 'title images postedAt views location price likes').limit(20);
+    const ads = await Ad.find(
+      { adType: req.query.type },
+      "title images postedAt views location price likes"
+    ).limit(20);
     return reply.send(ads);
   } catch (error) {
     handleServerError(reply, error);
@@ -93,8 +103,8 @@ async function getRandomsAds(req, reply) {
           location: 1,
           price: 1,
           likes: 1,
-        }
-      }
+        },
+      },
     ]);
     return reply.send(randomAds);
   } catch (error) {
@@ -164,15 +174,19 @@ async function getSearchedAds(req, reply) {
     const { query } = req.query;
     const searchedAds = await Ad.find({
       $or: [
-        { title: { $regex:  new RegExp(query, 'i') } },
-        { description: { $regex: new RegExp(query, 'i')} },
+        { title: { $regex: new RegExp(query, "i") } },
+        { description: { $regex: new RegExp(query, "i") } },
       ],
-    }).lean().select('title images postedAt views location price likes');
+    })
+      .lean()
+      .select("title images postedAt views location price likes");
 
-    if(searchedAds.length){
+    if (searchedAds.length) {
       return reply.send(searchedAds);
     } else {
-      return reply.send({ message: "Qidiruvingiz bo'yicha hech qanday ma'lumot topilmadi." })
+      return reply.send({
+        message: "Qidiruvingiz bo'yicha hech qanday ma'lumot topilmadi.",
+      });
     }
   } catch (error) {
     handleServerError(reply, error);
@@ -189,5 +203,5 @@ module.exports = {
   updateAdView,
   getSimilarAdsByType,
   toggleLikeAd,
-  getSearchedAds
+  getSearchedAds,
 };
