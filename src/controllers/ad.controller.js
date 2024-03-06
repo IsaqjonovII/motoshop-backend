@@ -81,7 +81,7 @@ async function getAdsByType(req, reply) {
     const ads = await Ad.find(
       { adType: req.query.type },
       "title images postedAt views location price likes"
-    ).limit(20);
+    ).sort({ postedAt: -1 }).limit(20);
     return reply.send(ads);
   } catch (error) {
     handleServerError(reply, error);
