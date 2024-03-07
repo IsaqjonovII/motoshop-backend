@@ -80,10 +80,10 @@ AdSchema.index({
   title: "text",
   description: "text",
   mileage: "text",
-  category: "text",
   color: "text",
   engineSize: "text",
   location: "text",
+  category: "text",
 });
 
 AdSchema.index({ "$**": "text" });

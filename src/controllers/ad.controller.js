@@ -176,6 +176,8 @@ async function getSearchedAds(req, reply) {
       $or: [
         { title: { $regex: new RegExp(query, "i") } },
         { description: { $regex: new RegExp(query, "i") } },
+        { location: { $regex: new RegExp(query, "i") } },
+        { color: { $regex: new RegExp(query, "i") } },
       ],
     })
       .lean()
