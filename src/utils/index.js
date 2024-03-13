@@ -12,7 +12,7 @@ async function uploadToCloudinary(imagePath) {
     const result = await v2.uploader.upload(imagePath, {
       folder: "motoshop",
     });
-    return result.url;
+    return result.secure_url;
   } catch (error) {
     console.error("Rasm yuklanishida xatolik bo'ldi:", error);
     throw error;
